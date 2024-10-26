@@ -92,3 +92,15 @@ function clearLocalStorageAndRefresh() {
     localStorage.clear();
     location.reload();
 }
+
+// Function to open the popup and apply blur to main content
+function openPopup() {
+    document.getElementById("popupOverlay").style.display = "flex";
+    document.querySelector(".main-content").classList.add("blur");
+}
+
+// Hide the popup and remove the blur from main content
+function closePopup() {
+    document.getElementById("popupOverlay").style.display = "none";
+    document.querySelector(".main-content").classList.remove("blur");
+}
