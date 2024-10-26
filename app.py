@@ -22,7 +22,13 @@ db_config = {
 # Route for the home page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    conn = psycopg2.connect(**db_config)
+    cursor = conn.cursor()
+    cursor.execute("SELECT item_id,item_name FROM item")
+    items = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return render_template('index.html', items=items)
 
 # Route to save data to the database
 @app.route('/send_to_db', methods=['POST'])
