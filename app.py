@@ -1,17 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import psycopg2
 import os
 
 app = Flask(__name__)
 
-# Database configuration
-# db_config = {
-#     'host': 'localhost',
-#     'dbname': 'postgres',
-#     'user': 'postgres',
-#     'password': 'hjkl',
-#     'port': '5432'
-# }
 db_config = {
     'host': os.getenv('DB_HOST', 'localhost'),
     'dbname': os.getenv('DB_NAME', 'postgres'),
@@ -45,6 +37,23 @@ def send_to_db():
     finally:
         cursor.close()
         conn.close()
+
+@app.route('/new_item')
+def new_item():
+    return render_template('new_item.html')
+
+# Route to save a new item in the item table
+@app.route('/save_item', methods=['POST'])
+def save_item():
+    item_name = request.form['item_name']
+    if item_name:
+        conn = psycopg2.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO item (item_name) VALUES (%s)", (item_name,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
